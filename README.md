@@ -6,6 +6,8 @@ A base docker container to help run other containers
 
 Configures and includes the following:
 
+ - Installs/updates ca-certificates
+ - Installs tzdata
  - User/Group is set to `runner:runner`
  - Installs [fixuid](https://github.com/boxboat/fixuid)
  - Installs an entrypoint `run` script that wraps `fixuid`
