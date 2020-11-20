@@ -10,5 +10,5 @@ Configures and includes the following:
  - Installs tzdata
  - User/Group is set to `runner:runner`
  - Installs [fixuid](https://github.com/boxboat/fixuid)
- - Installs an entrypoint `run` script that wraps `fixuid`
+ - Installs an entrypoint `run` script that wraps `fixuid` (should not run on scratch based image)
 

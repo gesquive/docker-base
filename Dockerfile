@@ -11,6 +11,7 @@ RUN addgroup -g 1000 runner && \
 RUN apk update && apk add --no-cache ca-certificates tzdata && update-ca-certificates
 
 RUN mkdir -p /etc/fixuid
+RUN mkdir -p /var/run
 COPY fixuid.yml /etc/fixuid/config.yml
 
 # =============================================================================
@@ -29,6 +30,7 @@ COPY --from=builder /etc/group /etc/group
 # Import from builder
 COPY --from=builder /go/bin/fixuid ${BIN}/fixuid
 COPY --from=builder /etc/fixuid /etc/fixuid
+COPY --from=builder /var/run/ /var/run
 
 # Add entrypoint script fixuid
 COPY run.sh ${BIN}/run
