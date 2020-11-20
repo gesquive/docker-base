@@ -1,3 +1,4 @@
+ARG BASE_IMAGE=scratch
 FROM golang:1.13-alpine AS builder
 
 ENV GO111MODULE=on
@@ -13,7 +14,7 @@ RUN mkdir -p /etc/fixuid
 COPY fixuid.yml /etc/fixuid/config.yml
 
 # =============================================================================
-FROM scratch
+FROM ${BASE_IMAGE}
 LABEL maintainer="Gus Esquivel <gesquive@gmail.com>"
 ENV BIN /usr/local/bin
 

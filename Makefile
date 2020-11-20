@@ -6,7 +6,8 @@ export SHELL ?= /bin/bash
 include make.cfg
 
 IMAGE := ${REGISTRY_URL}/${OWNER}/${PROJECT_NAME}
-DK_VERSION = $(shell git describe --always --tags | sed 's/^v//' | sed 's/-g/-/')
+DK_VERSION = $(shell git describe --always --tags --dirty | sed 's/^v//' | sed 's/-g/-/')
+DK_PLATFORMS ?= linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64
 
 export DOCKER_CLI_EXPERIMENTAL = enabled
 
@@ -24,7 +25,9 @@ help:
 build: ## Build the image
 	@echo "building ${DK_VERSION}"
 	${DOCKER} info
-	${DOCKER} build  --pull -t ${IMAGE}:${DK_VERSION} .
+	${DOCKER} build --build-arg BASE_IMAGE=alpine:3.12 --pull -t ${IMAGE}:${DK_VERSION}-alpine .
+	${DOCKER} build --build-arg BASE_IMAGE=busybox:1.32 --pull -t ${IMAGE}:${DK_VERSION}-busybox .
+	${DOCKER} build --pull -t ${IMAGE}:${DK_VERSION} -t ${IMAGE}:${DK_VERSION}-scratch .
 
 .PHONY: release
 release: ## Tag and release the image
@@ -47,4 +50,6 @@ release-multiarch:
 	${DOCKER} buildx create --driver docker-container --use build
 	${DOCKER} buildx inspect --bootstrap
 	${DOCKER} buildx ls
-	${DOCKER} buildx build --platform linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64 --pull -t ${IMAGE}:${DK_VERSION} -t ${IMAGE}:latest --push .
+	${DOCKER} buildx build --build-arg BASE_IMAGE=alpine:3.12 --platform ${DK_PLATFORMS} --pull -t ${IMAGE}:${DK_VERSION}-alpine -t ${IMAGE}:alpine --push .
+	${DOCKER} buildx build --build-arg BASE_IMAGE=busybox:1.32 --platform ${DK_PLATFORMS} --pull -t ${IMAGE}:${DK_VERSION}-busybox -t ${IMAGE}:busybox --push .
+	${DOCKER} buildx build --platform ${DK_PLATFORMS} --pull -t ${IMAGE}:${DK_VERSION} -t ${IMAGE}:${DK_VERSION}-scratch -t ${IMAGE}:scratch -t ${IMAGE}:latest --push .
