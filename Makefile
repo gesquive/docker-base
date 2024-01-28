@@ -25,8 +25,8 @@ help:
 build: ## Build the image
 	@echo "building ${DK_VERSION}"
 	${DOCKER} info
-	${DOCKER} build --build-arg BASE_IMAGE=alpine:3.12 --pull -t ${IMAGE}:${DK_VERSION}-alpine .
-	${DOCKER} build --build-arg BASE_IMAGE=busybox:1.32 --pull -t ${IMAGE}:${DK_VERSION}-busybox .
+	${DOCKER} build --build-arg BASE_IMAGE=alpine:3.19 --pull -t ${IMAGE}:${DK_VERSION}-alpine .
+	${DOCKER} build --build-arg BASE_IMAGE=busybox:1.36 --pull -t ${IMAGE}:${DK_VERSION}-busybox .
 	${DOCKER} build --pull -t ${IMAGE}:${DK_VERSION} -t ${IMAGE}:${DK_VERSION}-scratch .
 
 .PHONY: release
@@ -50,6 +50,7 @@ release-multiarch:
 	${DOCKER} buildx create --driver docker-container --use build
 	${DOCKER} buildx inspect --bootstrap
 	${DOCKER} buildx ls
-	${DOCKER} buildx build --build-arg BASE_IMAGE=alpine:3.12 --platform ${DK_PLATFORMS} --pull -t ${IMAGE}:${DK_VERSION}-alpine -t ${IMAGE}:alpine --push .
-	${DOCKER} buildx build --build-arg BASE_IMAGE=busybox:1.32 --platform ${DK_PLATFORMS} --pull -t ${IMAGE}:${DK_VERSION}-busybox -t ${IMAGE}:busybox --push .
+	${DOCKER} buildx build --build-arg BASE_IMAGE=alpine:3.19 --platform ${DK_PLATFORMS} --pull -t ${IMAGE}:${DK_VERSION}-alpine -t ${IMAGE}:alpine --push .
+	${DOCKER} buildx build --build-arg BASE_IMAGE=busybox:1.36 --platform ${DK_PLATFORMS} --pull -t ${IMAGE}:${DK_VERSION}-busybox -t ${IMAGE}:busybox --push .
 	${DOCKER} buildx build --platform ${DK_PLATFORMS} --pull -t ${IMAGE}:${DK_VERSION} -t ${IMAGE}:${DK_VERSION}-scratch -t ${IMAGE}:scratch -t ${IMAGE}:latest --push .
+	${DOCKER} context rm build

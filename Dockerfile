@@ -1,8 +1,8 @@
 ARG BASE_IMAGE=scratch
-FROM golang:1.13-alpine AS builder
+FROM golang:1.20-alpine AS builder
 
 ENV GO111MODULE=on
-RUN go get -v github.com/boxboat/fixuid && chmod 4755 ${GOPATH}/bin/fixuid
+RUN go install github.com/boxboat/fixuid@v0.6.0 && chmod 4755 ${GOPATH}/bin/fixuid
 
 # Runner user/group
 RUN addgroup -g 1000 runner && \
